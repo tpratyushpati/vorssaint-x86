@@ -47,9 +47,9 @@ if (( DEV )); then
     APP_OPTIMIZATION_FLAGS=(-Onone)
     BUILD_CONFIGURATION="debug"
 else
-    APP_NAME="Vorssaint"
-    EXECUTABLE="Vorssaint"
-    APP_BUNDLE_ID="com.vorssaint.utils"
+    APP_NAME="Vorssaint-x86"
+    EXECUTABLE="Vorssaint-x86"
+    APP_BUNDLE_ID="com.vorssaint.utils.x86"
     BUILD_VARIANT_FLAGS=()
     APP_OPTIMIZATION_FLAGS=(-O)
     BUILD_CONFIGURATION="release"
