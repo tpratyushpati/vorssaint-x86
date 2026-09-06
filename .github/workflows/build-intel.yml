@@ -1,0 +1,57 @@
+name: Build Vorssaint Intel
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - intel-port
+
+jobs:
+  build-intel:
+    runs-on: macos-15-intel
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show environment
+        run: |
+          uname -m
+          sw_vers
+          xcodebuild -version
+          swift --version
+
+      - name: Make scripts executable
+        run: |
+          chmod +x build.sh
+          chmod +x Tools/*.sh || true
+
+      - name: Run unit tests
+        run: |
+          ./build.sh --test --arch x86_64
+
+      - name: Build Intel app
+        run: |
+          ./build.sh --arch x86_64
+
+      - name: Verify architecture
+        run: |
+          echo "=== Main executable ==="
+          file build/VorssaintIntel || true
+          lipo -info build/VorssaintIntel || true
+
+          echo "=== Search for app bundle ==="
+          find build -name "*.app" -maxdepth 4 -print
+
+      - name: Package app
+        run: |
+          APP="$(find build -name "*.app" -maxdepth 4 -print -quit)"
+          test -n "$APP"
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "Vorssaint-x86.zip"
+
+      - name: Upload Intel build
+        uses: actions/upload-artifact@v4
+        with:
+          name: vorssaint-x86
+          path: Vorssaint-x86.zip
+          retention-days: 7
